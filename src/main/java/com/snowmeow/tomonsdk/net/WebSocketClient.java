@@ -73,7 +73,7 @@ public class WebSocketClient extends WebSocketListener {
                     if(payload.get("e").getAsString().equals("MESSAGE_CREATE")) {
                         Message message = gson.fromJson(gson.toJson(payload.get("d").getAsJsonObject()), Message.class);
                         String content = message.getContent();
-                        String channelId=  message.getChannel_id();
+                        String channelId=  message.getChannelId();
                         event.sendMessage(content, channelId);
                     }
                     break;

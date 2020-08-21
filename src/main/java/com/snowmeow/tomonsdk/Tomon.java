@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 public class Tomon {
 
     public static void main(String[] args) {
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2MTE4NDYxNjExMDU2NzQyNCIsIm5vbmNlIjoiUDhxUzNmNkZYNlpnVFl2bzlyc1Zldz09IiwiaWF0IjoxNTk3Nzc2NjA3fQ.NDOY-JTtOGK20OKEoDZDUv0GRfHnnIm0hKOOaRL0wrs";
+        String token = "token";
 
         Bot bot = new Bot(token);
         bot.start();

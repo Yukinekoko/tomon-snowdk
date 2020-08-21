@@ -26,10 +26,17 @@ public class BasePlugin {
         this.api = api;
     }
 
-    @OnMessage(value = "/hello")
+    @OnMessage(value = "/help")
     public void sayHello(String channelId) {
         String url = "/channels/" + channelId + "/messages";
-        String data = "{\"content\":\"hello!\"}";
+        String data = "{\"content\":\"还在写框架！根本没有功能哒！\"}";
+        api.post(url, data);
+    }
+
+    @OnMessage(value = "/喵")
+    public void sayMeow(String channelId) {
+        String url = "/channels/" + channelId + "/messages";
+        String data = "{\"content\":\"喵！\"}";
         api.post(url, data);
     }
 }
