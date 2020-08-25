@@ -11,7 +11,6 @@ public class Tomon {
 
     public static void main(String[] args) {
         String token = "token";
-
         Bot bot = new Bot(token);
         bot.start();
 

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-public class API {
+public class Api {
 
     String token;
 
@@ -15,7 +15,7 @@ public class API {
 
     static final String BASE_URL = "https://beta.tomon.co/api/v1";
 
-    public API(String token) {
+    public Api(String token) {
         this.token = token;
         this.okHttpClient  = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)

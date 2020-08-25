@@ -2,7 +2,8 @@ package com.snowmeow.tomonsdk;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.snowmeow.tomonsdk.net.API;
+import com.snowmeow.tomonsdk.net.Api;
+import com.snowmeow.tomonsdk.net.Route;
 import com.snowmeow.tomonsdk.net.WebSocketClient;
 import okhttp3.*;
 
@@ -18,7 +19,7 @@ public class Bot {
 
     public Bot(String token) {
         webSocketClient = new WebSocketClient(token);
-        Event event = new Event(session, new API(token));
+        Event event = new Event(session, new Service(new Route(token)));
         webSocketClient.setEvent(event);
     }
 

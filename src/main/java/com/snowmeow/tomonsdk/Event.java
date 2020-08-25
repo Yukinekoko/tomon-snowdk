@@ -1,7 +1,8 @@
 package com.snowmeow.tomonsdk;
 
 import com.snowmeow.tomonsdk.annotation.OnMessage;
-import com.snowmeow.tomonsdk.net.API;
+import com.snowmeow.tomonsdk.model.Message;
+import com.snowmeow.tomonsdk.net.Api;
 import okhttp3.WebSocket;
 
 import java.io.File;
@@ -41,12 +42,12 @@ public class Event {
     static final String USER_PRESENCE_UPDATE = "USER_PRESENCE_UPDATE";
 
     WebSocket webSocket;
-    API api;
     Map<String, Command> commandMap;
+    Service service;
 
-    public Event(WebSocket webSocket, API api) {
+    public Event(WebSocket webSocket, Service service) {
         this.webSocket = webSocket;
-        this.api = api;
+        this.service = service;
         commandMap = new HashMap<String, Command>();
         searchClass("com.snowmeow.tomonsdk.plugin");
     }
@@ -80,8 +81,8 @@ public class Event {
             //获取实例化的对象
             List<Object> classObject = new ArrayList<Object>();
             for(Class<?> c : classSet) {
-                Constructor constructor = c.getDeclaredConstructor(WebSocket.class, API.class);
-                classObject.add(constructor.newInstance(webSocket, api));
+                Constructor constructor = c.getDeclaredConstructor(WebSocket.class, Service.class);
+                classObject.add(constructor.newInstance(webSocket, service));
             }
 
             Object classTest = classObject.get(0);
@@ -101,16 +102,17 @@ public class Event {
             }
         }
         catch (Exception e) {
-            System.out.println("class error!");
+            e.printStackTrace();
+            System.out.println("class error");
         }
 
 
     }
 
-    public void sendMessage(String commandWord, String channelId) throws InvocationTargetException, IllegalAccessException {
-        Command command = commandMap.get(commandWord);
+    public void sendMessage(Message message) throws InvocationTargetException, IllegalAccessException {
+        Command command = commandMap.get(message.getContent());
         if(command == null) return;
-        command.method.invoke(command.object, channelId);
+        command.method.invoke(command.object, message);
         System.out.println("调用方法！");
     }
 

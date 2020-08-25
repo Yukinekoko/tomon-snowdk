@@ -1,42 +1,51 @@
 package com.snowmeow.tomonsdk.plugin;
 
+import com.snowmeow.tomonsdk.Service;
 import com.snowmeow.tomonsdk.annotation.OnMessage;
-import com.snowmeow.tomonsdk.net.API;
+import com.snowmeow.tomonsdk.model.Message;
+import com.snowmeow.tomonsdk.net.Api;
 import okhttp3.WebSocket;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BasePlugin {
 
     WebSocket webSocket;
-    API api;
+    Service service;
 
     public BasePlugin() {
 
     }
 
-    public BasePlugin(WebSocket webSocket, API api) {
+    public BasePlugin(WebSocket webSocket, Service service) {
         this.webSocket = webSocket;
-        this.api = api;
+        this.service = service;
     }
 
     public void setWebSocket(WebSocket webSocket) {
         this.webSocket = webSocket;
     }
 
-    public void setApi(API api) {
-        this.api = api;
+    public void setService(Service service) {
+        this.service = service;
     }
 
     @OnMessage(value = "/help")
-    public void sayHello(String channelId) {
-        String url = "/channels/" + channelId + "/messages";
-        String data = "{\"content\":\"还在写框架！根本没有功能哒！\"}";
-        api.post(url, data);
+    public void sayHello(Message message) {
+
+        List<File> fileList = new ArrayList<File>();
+        fileList.add(new File("D:\\NasDrive\\Programmer\\Project\\tomonsdk\\src\\main\\resources\\1.jpg"));
+
+        String data = "还在写框架！根本没有功能哒！";
+        try {
+            service.replyMessage(message, data, fileList);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
-    @OnMessage(value = "/喵")
-    public void sayMeow(String channelId) {
-        String url = "/channels/" + channelId + "/messages";
-        String data = "{\"content\":\"喵！\"}";
-        api.post(url, data);
-    }
 }
