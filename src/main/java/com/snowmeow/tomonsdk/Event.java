@@ -6,6 +6,7 @@ import com.snowmeow.tomonsdk.net.Api;
 import okhttp3.WebSocket;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,7 +53,11 @@ public class Event {
         searchClass("com.snowmeow.tomonsdk.plugin");
     }
 
-    public void searchClass(String packageName) {
+    /** 获取指定包下的所有Class对象
+     *
+     *  */
+    private Set<Class<?>> findClass(String packageName) {
+
         Set<Class<?>> classSet = new HashSet<Class<?>>();
 
         //获取工程目录
@@ -73,10 +78,38 @@ public class Event {
             }
         }
 
-        try {
-            //获得类对象
-            for(String className : classPath)
+        //获得类对象
+        for(String className : classPath) {
+            try {
                 classSet.add(Class.forName(className));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return classSet;
+    }
+
+    /** 获取带有指定注解的Method对象
+     *
+     *  */
+    private Set<Method> findMethodWithAnnotation(Class<?> clazz, Annotation annotation) {
+
+        Set<Method> methodSet = new HashSet<Method>();
+
+        Method[] allMethod = clazz.getMethods();
+
+        for(Method m : allMethod)
+            if (m.getAnnotation(annotation.getClass()) != null)
+                methodSet.add(m);
+
+        return methodSet;
+    }
+
+    public void searchClass(String packageName) {
+        Set<Class<?>> classSet = findClass(packageName);
+
+        try {
 
             //获取实例化的对象
             List<Object> classObject = new ArrayList<Object>();

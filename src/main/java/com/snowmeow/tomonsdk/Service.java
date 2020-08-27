@@ -23,10 +23,12 @@ public class Service {
     }
 
     /** 回复消息
-     *
+     * @param message 被回复的Message对象
+     * @param content 回复内容
+     * @param fileList 可选 发送的文件
      * */
     public void replyMessage(Message message, String content, List<File> fileList) {
-
+        // TODO : 增加@人以及发emoji的功能
         String url = "/channels/" + message.getChannelId() + "/messages";
 
         JsonObject data = new JsonObject();
@@ -62,4 +64,18 @@ public class Service {
             });
         }
     }
+
+    /** 发送消息
+     * @param channelId 发送的频道ID
+     * @param content 消息内容
+     * @param fileList 发送的文件
+     * */
+    public void sendMessage(String channelId, String content, List<File> fileList) {
+        // TODO : 主动发送消息的接口
+    }
+
+
+
+
+
 }

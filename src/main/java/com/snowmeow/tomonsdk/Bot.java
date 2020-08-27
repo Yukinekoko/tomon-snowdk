@@ -19,8 +19,6 @@ public class Bot {
 
     public Bot(String token) {
         webSocketClient = new WebSocketClient(token);
-        Event event = new Event(session, new Service(new Route(token)));
-        webSocketClient.setEvent(event);
     }
 
     public Bot(String fullName, String password) {

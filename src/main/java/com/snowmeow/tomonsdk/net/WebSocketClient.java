@@ -5,6 +5,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.snowmeow.tomonsdk.Event;
+import com.snowmeow.tomonsdk.PluginLoader;
+import com.snowmeow.tomonsdk.PluginManage;
 import com.snowmeow.tomonsdk.model.Message;
 import okhttp3.Response;
 import okhttp3.WebSocket;
@@ -21,15 +23,13 @@ public class WebSocketClient extends WebSocketListener {
     private String session_id;
     private int heartbeat_interval;
     private String token;
-    private Event event;
+    private PluginManage pluginManage;
 
     public WebSocketClient(String token) {
         super();
         this.token = token;
-    }
-
-    public void setEvent(Event event) {
-        this.event = event;
+        pluginManage = new PluginManage();
+        pluginManage.load(token);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class WebSocketClient extends WebSocketListener {
                     System.out.println("on: DISPATCH");
                     if(payload.get("e").getAsString().equals("MESSAGE_CREATE")) {
                         Message message = gson.fromJson(gson.toJson(payload.get("d").getAsJsonObject()), Message.class);
-                        event.sendMessage(message);
+                        pluginManage.sendMessage(message);
                     }
                     break;
                 case 1:
