@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="websocket" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-5level][%d{HH:mm:ss.SSS}][%logger] %msg%n"/>
+        </Console>
+
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="websocket"/>
+        </Root>
+    </Loggers>
+</Configuration>

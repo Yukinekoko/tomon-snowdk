@@ -5,41 +5,47 @@ import com.google.gson.JsonObject;
 import com.snowmeow.tomonsdk.net.Api;
 import com.snowmeow.tomonsdk.net.Route;
 import com.snowmeow.tomonsdk.net.WebSocketClient;
+import com.snowmeow.tomonsdk.net.WebSocketManage;
+import com.snowmeow.tomonsdk.util.LoggerType;
 import okhttp3.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class Bot {
 
-    WebSocketClient webSocketClient;
-    WebSocket session;
+    private static final Logger logger = LogManager.getLogger(LoggerType.MAIN);
+
+    WebSocketManage webSocketManage;
 
     static final String WS_URL = "ws://gateway.tomon.co";
 
     public Bot(String token) {
-        webSocketClient = new WebSocketClient(token);
+        webSocketManage = new WebSocketManage(token);
     }
 
-    public Bot(String fullName, String password) {
-        webSocketClient = new WebSocketClient(getToken(fullName, password));
-    }
+/*    public Bot(String fullName, String password) {
+        webSocketManage = new WebSocketManage(getToken(fullName, password));
+    }*/
 
     public void start() {
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .build();
-        Request request = new Request.Builder()
-                .url(WS_URL)
-                .build();
-        session = okHttpClient.newWebSocket(request, webSocketClient);
-
+        webSocketManage.connect();
     }
 
     public void stop() {
-        session.cancel();
+        // TODO
     }
 
+/*    *//** 使用用户名和密码登录
+     * @param fullName 全名
+     * @param password 密码
+     * @return 账号token
+     * *//*
     private String getToken(String fullName, String password) {
+
+        logger.info("Get account Token...");
 
         OkHttpClient okHttpClient  = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
@@ -65,10 +71,9 @@ public class Bot {
             Response response = call.execute();
             return response.body().string();
         } catch (IOException e) {
-            // TODO : 登录错误时的反馈
             e.printStackTrace();
             System.out.println("error!");
             return "error";
         }
-    }
+    }*/
 }

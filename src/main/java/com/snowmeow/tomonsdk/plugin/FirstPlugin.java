@@ -1,6 +1,7 @@
 package com.snowmeow.tomonsdk.plugin;
 
 import com.snowmeow.tomonsdk.Service;
+import com.snowmeow.tomonsdk.annotation.Module;
 import com.snowmeow.tomonsdk.annotation.OnMessage;
 import com.snowmeow.tomonsdk.model.Message;
 import com.snowmeow.tomonsdk.net.Api;
@@ -10,6 +11,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+@Module(name = "测试模块", help = "帮助~")
 public class FirstPlugin extends BasePlugin {
 
     private Service service;
@@ -27,17 +29,20 @@ public class FirstPlugin extends BasePlugin {
     @OnMessage(value = "/help")
     public void sayHello(Message message) {
 
-        List<File> fileList = new ArrayList<File>();
-        fileList.add(new File("D:\\NasDrive\\Programmer\\Project\\tomonsdk\\src\\main\\resources\\1.jpg"));
 
-        String data = "还在写框架！根本没有功能哒！";
+        String data = "/沙雕图 来一张沙雕图 \n 现在只有这个弱智功能呢！";
         try {
-            service.replyMessage(message, data, fileList);
+            service.replyMessage(message, data, null);
         }
         catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    @OnMessage(value = "/yukineko")
+    public void neko(Message message) {
+        service.replyMessage(message, "/yukineko", null);
     }
 
 }

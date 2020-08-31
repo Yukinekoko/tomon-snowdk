@@ -5,6 +5,10 @@ import com.snowmeow.tomonsdk.model.Message;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
+/** 插件管理
+ * @author snowmeow
+ * @date 2020/08/27
+ * */
 public class PluginManage {
 
     /* fullMatch事件 */
@@ -22,6 +26,7 @@ public class PluginManage {
 
     }
 
+
     public void sendMessage(Message message) throws InvocationTargetException, IllegalAccessException {
         PluginLoader.Command command = fullMatchCommand.get(message.getContent());
         if(command == null) return;
@@ -29,4 +34,9 @@ public class PluginManage {
         System.out.println("调用方法！");
     }
 
+    private void loadModuleConfig() {
+
+
+
+    }
 }

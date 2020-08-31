@@ -35,7 +35,7 @@ public class Message {
     /* 消息的表情 */
     private Stamp[] stamps;
     /* 消息的回复 */
-    private Message[] reply;
+    private Message reply;
 
     public String getId() {
         return id;
@@ -109,11 +109,11 @@ public class Message {
         this.reactions = reactions;
     }
 
-    public Message[] getReply() {
+    public Message getReply() {
         return reply;
     }
 
-    public void setReply(Message[] reply) {
+    public void setReply(Message reply) {
         this.reply = reply;
     }
 

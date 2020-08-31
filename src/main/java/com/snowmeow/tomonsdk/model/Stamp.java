@@ -10,7 +10,7 @@ public class Stamp {
     /* 表情ID */
     private String id;
     /* 表情别名 */
-    private int alias;
+    private String alias;
     /* 作者ID */
     @SerializedName("author_id")
     private String authorId;
@@ -38,11 +38,11 @@ public class Stamp {
         this.id = id;
     }
 
-    public int getAlias() {
+    public String getAlias() {
         return alias;
     }
 
-    public void setAlias(int alias) {
+    public void setAlias(String alias) {
         this.alias = alias;
     }
 
