@@ -1,41 +1,35 @@
 package com.snowmeow.tomonsdk.net;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.snowmeow.tomonsdk.Event;
-import com.snowmeow.tomonsdk.PluginLoader;
-import com.snowmeow.tomonsdk.PluginManage;
+import com.snowmeow.tomonsdk.ModuleManage;
 import com.snowmeow.tomonsdk.model.Message;
 import com.snowmeow.tomonsdk.util.JsonUtil;
 import com.snowmeow.tomonsdk.util.LoggerType;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
-import okio.ByteString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
-
 public class WebSocketClient extends WebSocketListener {
 
-    private static final Logger logger = LogManager.getLogger(LoggerType.WEBSOCKET);
+    private static final Logger logger = LogManager.getLogger(LoggerType.NETWORK);
 
     private boolean isOpen;
     private String session_id;
     private int heartbeat_interval;
     private String token;
-    private PluginManage pluginManage;
+    private ModuleManage moduleManage;
+    private Gson gson = JsonUtil.GSON;
 
-    public WebSocketClient(String token) {
+    public WebSocketClient(String token, ModuleManage moduleManage) {
         super();
         this.token = token;
-        pluginManage = new PluginManage();
-        pluginManage.load(token);
+        this.moduleManage = moduleManage;
     }
 
     @Override
@@ -73,34 +67,12 @@ public class WebSocketClient extends WebSocketListener {
         * HEARTBEAT_ACK : 4
         * VOICE_STASE_UPDATE : 5
         * */
-        Gson gson = JsonUtil.GSON;
         try {
             JsonObject payload = JsonParser.parseString(text).getAsJsonObject();
             int op = payload.get("op").getAsInt();
             switch (op) {
                 case 0:
-                    // 接收业务事件
-                    if(payload.get("e").getAsString().equals("MESSAGE_CREATE")) {
-                        // logger.debug(gson.toJson(payload.get("d").getAsJsonObject()));
-                        Message message = gson.fromJson(gson.toJson(payload.get("d").getAsJsonObject()), Message.class);
-                        if(message.getAuthor() != null)
-                            logger.info("Recv: MESSAGE_CREATE."
-                                    + message.getChannelId()
-                                    + "."
-                                    + message.getAuthor().getName()
-                                    + " > "
-                                    + message.getContent());
-                        else
-                            logger.info("Recv: MESSAGE_CREATE." + message.getChannelId()
-                                    + ".SYSTEM_MESSAGE" + " > " + message.getContent());
-
-                        // TODO : 忽略自己的信息
-                        if(message.getAuthor().getUsername().equals("yukidevbot")) return;
-                        pluginManage.sendMessage(message);
-                    }
-                    else {
-                        logger.info("Recv: DISPATCH");
-                    }
+                    onDispatch(payload);
                     break;
                 case 1:
                     logger.warn("Recv: HEARTBEAT");
@@ -154,13 +126,12 @@ public class WebSocketClient extends WebSocketListener {
 
     private void sendHeartbeat(final WebSocket webSocket) {
 
-        logger.debug("Send: Heartbeat");
-
         final int delay = this.heartbeat_interval;
         final String dataString = "{\"op\":1}";
         new Thread(new Runnable() {
             public void run() {
                 while(isOpen) {
+                    logger.debug("Send: Heartbeat");
                     webSocket.send(dataString);
                     try {
                         Thread.sleep(delay);
@@ -170,5 +141,31 @@ public class WebSocketClient extends WebSocketListener {
                 }
             }
         }).start();
+    }
+
+    private void onDispatch(JsonObject payload) {
+        // 接收业务事件
+        if(payload.get("e").getAsString().equals("MESSAGE_CREATE")) {
+            // logger.debug(gson.toJson(payload.get("d").getAsJsonObject()));
+            Message message = gson.fromJson(gson.toJson(payload.get("d").getAsJsonObject()), Message.class);
+            if(message.getAuthor() != null)
+                logger.info("Recv: MESSAGE_CREATE."
+                        + message.getChannelId()
+                        + "."
+                        + message.getAuthor().getName()
+                        + " > "
+                        + message.getContent());
+            else
+                logger.info("Recv: MESSAGE_CREATE." + message.getChannelId()
+                        + ".SYSTEM_MESSAGE" + " > " + message.getContent());
+
+            // TODO : 忽略自己的信息
+            if(message.getAuthor().getUsername().equals("yukidevbot")) return;
+            moduleManage.onMessage(message);
+        }
+        else {
+            logger.info("Recv: DISPATCH");
+        }
+
     }
 }

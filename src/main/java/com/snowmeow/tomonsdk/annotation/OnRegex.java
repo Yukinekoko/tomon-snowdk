@@ -7,7 +7,9 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface OnMessage {
+public @interface OnRegex {
 
     String value();
+
+    String help() default "";
 }

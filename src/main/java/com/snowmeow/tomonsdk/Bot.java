@@ -18,17 +18,18 @@ public class Bot {
 
     private static final Logger logger = LogManager.getLogger(LoggerType.MAIN);
 
-    WebSocketManage webSocketManage;
+    //private static final String WS_URL = "ws://gateway.tomon.co";
 
-    static final String WS_URL = "ws://gateway.tomon.co";
+    private WebSocketManage webSocketManage;
+
+    private ModuleManage moduleManage;
 
     public Bot(String token) {
-        webSocketManage = new WebSocketManage(token);
+        moduleManage = new ModuleManage();
+        moduleManage.load(token);
+        webSocketManage = new WebSocketManage(token, moduleManage);
     }
 
-/*    public Bot(String fullName, String password) {
-        webSocketManage = new WebSocketManage(getToken(fullName, password));
-    }*/
 
     public void start() {
         webSocketManage.connect();
@@ -38,11 +39,8 @@ public class Bot {
         // TODO
     }
 
-/*    *//** 使用用户名和密码登录
-     * @param fullName 全名
-     * @param password 密码
-     * @return 账号token
-     * *//*
+
+/*
     private String getToken(String fullName, String password) {
 
         logger.info("Get account Token...");
@@ -75,5 +73,6 @@ public class Bot {
             System.out.println("error!");
             return "error";
         }
-    }*/
+    }
+*/
 }

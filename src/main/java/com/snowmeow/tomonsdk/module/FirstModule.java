@@ -1,18 +1,12 @@
-package com.snowmeow.tomonsdk.plugin;
+package com.snowmeow.tomonsdk.module;
 
 import com.snowmeow.tomonsdk.Service;
 import com.snowmeow.tomonsdk.annotation.Module;
-import com.snowmeow.tomonsdk.annotation.OnMessage;
+import com.snowmeow.tomonsdk.annotation.OnFullMatch;
 import com.snowmeow.tomonsdk.model.Message;
-import com.snowmeow.tomonsdk.net.Api;
-import okhttp3.WebSocket;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-@Module(name = "测试模块", help = "帮助~")
-public class FirstPlugin extends BasePlugin {
+@Module(value = "测试模块", help = "帮助~")
+public class FirstModule extends BaseModule {
 
     private Service service;
 
@@ -26,7 +20,7 @@ public class FirstPlugin extends BasePlugin {
 
     }
 
-    @OnMessage(value = "/help")
+    @OnFullMatch(value = "/help")
     public void sayHello(Message message) {
 
 
@@ -40,7 +34,7 @@ public class FirstPlugin extends BasePlugin {
 
     }
 
-    @OnMessage(value = "/yukineko")
+    @OnFullMatch(value = "/yukineko")
     public void neko(Message message) {
         service.replyMessage(message, "/yukineko", null);
     }
