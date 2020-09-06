@@ -1,7 +1,8 @@
-package com.snowmeow.tomonsdk;
+package com.snowmeow.tomonsdk.core;
 
+import com.snowmeow.tomonsdk.Service;
 import com.snowmeow.tomonsdk.annotation.Module;
-import com.snowmeow.tomonsdk.annotation.OnFullMatch;
+import com.snowmeow.tomonsdk.annotation.OnMessage;
 import com.snowmeow.tomonsdk.net.Route;
 import com.snowmeow.tomonsdk.module.BaseModule;
 import com.snowmeow.tomonsdk.util.LoggerType;
@@ -177,21 +178,30 @@ public class ModuleLoader {
         return methodSet;
     }
 
-    /** 加载full match事件
+    /** 加载指定消息事件
      *
      * */
-    public Map<String, Instruction> fullMatchLoader() {
+    public Map<String, ModuleInstruction> instructionLoader(OnMessage.Type type) {
 
         Map<Class<?>, Set<Method>> methodMap = new HashMap<Class<?>, Set<Method>>();
-        for (Class clazz : classSet)
-            methodMap.put(clazz, findMethodWithAnnotation(clazz, OnFullMatch.class));
+        //获取每一个类带有OnMessage注解的方法Set并注定type类型
+        for (Class clazz : classSet) {
+            Set<Method> allMethodSet = findMethodWithAnnotation(clazz, OnMessage.class);
+            Set<Method> currentMethodSet = new HashSet<Method>();
 
-        Map<String, Instruction> commandMap = new HashMap<String, Instruction>();
+            for(Method m : allMethodSet) {
+                if (m.getAnnotation(OnMessage.class).type().equals(type)) {
+                    currentMethodSet.add(m);
+                }
+            }
+            methodMap.put(clazz, currentMethodSet);
+        }
+
+
+        Map<String, ModuleInstruction> commandMap = new HashMap<String, ModuleInstruction>();
 
         for(Map.Entry<Class<?>, Set<Method>> entry : methodMap.entrySet()) {
             try {
-               /* // 获取有参参构造器
-                Constructor constructor = entry.getKey().getEnclosingConstructor();*/
                 // 实例化对象
                 Object classObject = entry.getKey().newInstance();
                 Field serviceField = entry.getKey().getDeclaredField("service");
@@ -199,8 +209,8 @@ public class ModuleLoader {
                 serviceField.set(classObject, service);
                 //获取指令内容并加入Map
                 for(Method method : entry.getValue()) {
-                    String word = method.getAnnotation(OnFullMatch.class).value();
-                    commandMap.put(word, new Instruction(classObject, method));
+                    String word = method.getAnnotation(OnMessage.class).value();
+                    commandMap.put(word, new ModuleInstruction(classObject, method));
                 }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -222,6 +232,67 @@ public class ModuleLoader {
             moduleSet.add(clazz.getAnnotation(Module.class));
 
         return moduleSet;
+    }
+
+    /** 获取一个模块中指定type的OnMessage事件 */
+    public Map<String, Method> findEventMethod(Class<?> clazz, OnMessage.Type type) {
+
+        Map<String, Method> methodMap = new HashMap<String, Method>();
+
+        Method[] allMethod = clazz.getMethods();
+
+        for(Method m : allMethod) {
+            OnMessage message = m.getAnnotation(OnMessage.class);
+            if(message != null && message.type() == type) {
+                methodMap.put(message.value(), m);
+            }
+        }
+
+        return methodMap;
+
+    }
+
+    /** 获取模块Set */
+    public Set<ModuleInstruction> getModuleSet() {
+        Set<ModuleInstruction> moduleInstructionSet = new HashSet<ModuleInstruction>();
+
+        for(Class<?> clazz : classSet) {
+
+            Module moduleMessage = clazz.getAnnotation(Module.class);
+            if(moduleMessage == null) { //error
+                logger.error("模块" + clazz.getName() + "没有 Module 注解，加载失败！");
+                continue;
+            }
+
+            try {
+                Object moduleInstance = clazz.newInstance();
+                Field serviceField = clazz.getDeclaredField("service");
+                serviceField.setAccessible(true);
+                serviceField.set(moduleInstance, service);
+
+                ModuleInstruction moduleInstruction = new ModuleInstruction(
+                        moduleInstance,
+                        moduleMessage.value(),
+                        moduleMessage.help(),
+                        moduleMessage.defaultEnable());
+                //fullMatch
+                moduleInstruction.setInstructionFullMatch(findEventMethod(clazz, OnMessage.Type.FULL_MATCH));
+                //prefix
+                moduleInstruction.setInstructionPrefix(findEventMethod(clazz, OnMessage.Type.PREFIX));
+                //regex
+                moduleInstruction.setInstructionRegex(findEventMethod(clazz, OnMessage.Type.REGEX));
+
+                moduleInstructionSet.add(moduleInstruction);
+
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        }
+        return moduleInstructionSet;
     }
 
 

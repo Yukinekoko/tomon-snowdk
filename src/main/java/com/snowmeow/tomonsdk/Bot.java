@@ -1,18 +1,10 @@
 package com.snowmeow.tomonsdk;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.snowmeow.tomonsdk.net.Api;
-import com.snowmeow.tomonsdk.net.Route;
-import com.snowmeow.tomonsdk.net.WebSocketClient;
+import com.snowmeow.tomonsdk.core.ModuleManage;
 import com.snowmeow.tomonsdk.net.WebSocketManage;
 import com.snowmeow.tomonsdk.util.LoggerType;
-import okhttp3.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class Bot {
 

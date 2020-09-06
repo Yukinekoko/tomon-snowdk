@@ -1,5 +1,5 @@
 package com.snowmeow.tomonsdk.net;
-import com.snowmeow.tomonsdk.ModuleManage;
+import com.snowmeow.tomonsdk.core.ModuleManage;
 import com.snowmeow.tomonsdk.util.LoggerType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

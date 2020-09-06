@@ -2,7 +2,7 @@ package com.snowmeow.tomonsdk.module;
 
 import com.snowmeow.tomonsdk.Service;
 import com.snowmeow.tomonsdk.annotation.Module;
-import com.snowmeow.tomonsdk.annotation.OnFullMatch;
+import com.snowmeow.tomonsdk.annotation.OnMessage;
 import com.snowmeow.tomonsdk.model.Message;
 
 @Module(value = "测试模块", help = "帮助~")
@@ -20,7 +20,7 @@ public class FirstModule extends BaseModule {
 
     }
 
-    @OnFullMatch(value = "/help")
+    @OnMessage(value = "/help")
     public void sayHello(Message message) {
 
 
@@ -34,7 +34,7 @@ public class FirstModule extends BaseModule {
 
     }
 
-    @OnFullMatch(value = "/yukineko")
+    @OnMessage(value = "/yukineko", help = "~")
     public void neko(Message message) {
         service.replyMessage(message, "/yukineko", null);
     }

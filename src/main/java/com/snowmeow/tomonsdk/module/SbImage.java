@@ -3,7 +3,7 @@ package com.snowmeow.tomonsdk.module;
 
 import com.snowmeow.tomonsdk.Service;
 import com.snowmeow.tomonsdk.annotation.Module;
-import com.snowmeow.tomonsdk.annotation.OnFullMatch;
+import com.snowmeow.tomonsdk.annotation.OnMessage;
 import com.snowmeow.tomonsdk.model.Message;
 
 import java.io.File;
@@ -23,7 +23,7 @@ public class SbImage extends BaseModule {
 
     }
 
-    @OnFullMatch(value = "/沙雕图")
+    @OnMessage(value = "/沙雕图")
     public void sendSbImage(Message message) {
         String basePath = "res/sb/";
         String[] fileNameList = new File(basePath).list();

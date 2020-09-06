@@ -3,7 +3,7 @@ package com.snowmeow.tomonsdk.net;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.snowmeow.tomonsdk.ModuleManage;
+import com.snowmeow.tomonsdk.core.ModuleManage;
 import com.snowmeow.tomonsdk.model.Message;
 import com.snowmeow.tomonsdk.util.JsonUtil;
 import com.snowmeow.tomonsdk.util.LoggerType;
